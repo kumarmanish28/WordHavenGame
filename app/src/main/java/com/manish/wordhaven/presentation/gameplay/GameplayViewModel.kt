@@ -50,7 +50,8 @@ class GameplayViewModel @Inject constructor(
                     it.copy(
                         foundWords = newFoundWords,
                         isLevelComplete = result.isLevelComplete,
-                        errorTrigger = it.errorTrigger + 1
+                        lastWordResult = WordSubmissionResult.SUCCESS,
+                        lastSubmittedWord = word.uppercase()
                     )
                 }
                 if (result.isLevelComplete) {
@@ -58,22 +59,33 @@ class GameplayViewModel @Inject constructor(
                 }
             }
             is WordResult.Bonus -> {
-                _uiState.update { it.copy(coinsEarned = it.coinsEarned + 10) }
-                viewModelScope.launch {
-                    repository.completeLevel(levelId, 10)
-                }
+                // Bonus word found
             }
             WordResult.Invalid, WordResult.Duplicate -> {
-                _uiState.update { it.copy(errorTrigger = it.errorTrigger + 1) }
+                _uiState.update { 
+                    it.copy(
+                        lastWordResult = WordSubmissionResult.FAILURE,
+                        lastSubmittedWord = word.uppercase(),
+                        errorTrigger = it.errorTrigger + 1 
+                    )
+                }
             }
         }
     }
 
+    fun clearSubmissionResult() {
+        _uiState.update { it.copy(lastWordResult = null, lastSubmittedWord = null) }
+    }
+
     private fun completeLevel() {
         viewModelScope.launch {
-            repository.completeLevel(levelId, 50)
+            repository.completeLevel(levelId)
         }
     }
+}
+
+enum class WordSubmissionResult {
+    SUCCESS, FAILURE
 }
 
 data class GameplayUiState(
@@ -81,6 +93,7 @@ data class GameplayUiState(
     val foundWords: Set<String> = emptySet(),
     val isLoading: Boolean = true,
     val isLevelComplete: Boolean = false,
-    val coinsEarned: Int = 0,
-    val errorTrigger: Int = 0
+    val errorTrigger: Int = 0,
+    val lastWordResult: WordSubmissionResult? = null,
+    val lastSubmittedWord: String? = null
 )

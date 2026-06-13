@@ -7,6 +7,5 @@ interface PreferenceDataSource {
     val userProgress: Flow<UserProgress>
     suspend fun updateCurrentLevel(levelId: Int)
     suspend fun updateUnlockedLevels(levelId: Int)
-    suspend fun updateCoins(coins: Int)
     suspend fun addCompletedLevel(levelId: Int)
 }

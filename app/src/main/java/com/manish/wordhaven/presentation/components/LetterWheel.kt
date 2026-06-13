@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -33,9 +35,10 @@ fun LetterWheel(
     val textMeasurer = rememberTextMeasurer()
 
     BoxWithConstraints(modifier = modifier) {
+        val density = androidx.compose.ui.platform.LocalDensity.current
         val center = Offset(constraints.maxWidth / 2f, constraints.maxHeight / 2f)
         val radius = min(constraints.maxWidth, constraints.maxHeight) / 3.8f
-        val nodeRadius = 36.dp.value * 2f
+        val nodeRadius = with(density) { 32.dp.toPx() }
 
         val nodes = remember(letters) {
             val angleStep = 2 * PI / letters.size
@@ -86,60 +89,60 @@ fun LetterWheel(
                     )
                 }
         ) {
-            // Draw large wheel background with padding
+            // 1. Draw large wheel background (Glass effect)
             drawCircle(
-                color = Color.White.copy(alpha = 0.5f),
-                radius = radius + nodeRadius * 1.6f,
+                color = Color.White.copy(alpha = 0.2f),
+                radius = radius + nodeRadius * 1.5f,
                 center = center
             )
 
-            // Draw connection lines
+            // 2. Draw connection lines
             if (selectedIndices.isNotEmpty()) {
                 for (i in 0 until selectedIndices.size - 1) {
                     drawLine(
-                        color = Primary.copy(alpha = 0.8f),
+                        color = Primary,
                         start = nodes[selectedIndices[i]].center,
                         end = nodes[selectedIndices[i + 1]].center,
-                        strokeWidth = 20f,
+                        strokeWidth = 24f, // Thicker lines
                         cap = StrokeCap.Round
                     )
                 }
                 currentTouchPoint?.let { touchPoint ->
                     drawLine(
-                        color = Primary.copy(alpha = 0.5f),
+                        color = Primary.copy(alpha = 0.6f),
                         start = nodes[selectedIndices.last()].center,
                         end = touchPoint,
-                        strokeWidth = 20f,
+                        strokeWidth = 24f,
                         cap = StrokeCap.Round
                     )
                 }
             }
 
-            // Draw nodes
+            // 3. Draw nodes
             nodes.forEachIndexed { index, node ->
                 val isSelected = selectedIndices.contains(index)
                 
-                // Background circle with "padding" effect
+                // Outer glow/border for selected nodes
+                if (isSelected) {
+                    drawCircle(
+                        color = Primary.copy(alpha = 0.3f),
+                        radius = nodeRadius + 4.dp.toPx(),
+                        center = node.center
+                    )
+                }
+
+                // Main circle
                 drawCircle(
                     color = if (isSelected) Primary else Color.White,
                     radius = nodeRadius,
                     center = node.center
                 )
                 
-                if (!isSelected) {
-                    drawCircle(
-                        color = Color.LightGray.copy(alpha = 0.5f),
-                        radius = nodeRadius,
-                        center = node.center,
-                        style = Stroke(width = 1f)
-                    )
-                }
-
                 val textLayoutResult = textMeasurer.measure(
                     text = AnnotatedString(node.letter),
                     style = TextStyle(
-                        color = if (isSelected) Color.White else Primary,
-                        fontSize = 28.sp,
+                        color = if (isSelected) Color.White else Color(0xFF333333),
+                        fontSize = 30.sp,
                         fontWeight = FontWeight.Bold
                     )
                 )
@@ -149,6 +152,50 @@ fun LetterWheel(
                     topLeft = Offset(
                         node.center.x - textLayoutResult.size.width / 2,
                         node.center.y - textLayoutResult.size.height / 2
+                    )
+                )
+            }
+
+            // 4. Draw current word bubble at the top
+            if (selectedIndices.isNotEmpty()) {
+                val currentWord = selectedIndices.joinToString("") { nodes[it].letter }
+                val wordTextResult = textMeasurer.measure(
+                    text = AnnotatedString(currentWord),
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                
+                val paddingH = 28.dp.toPx()
+                val paddingV = 12.dp.toPx()
+                val bubbleWidth = max(wordTextResult.size.width + paddingH * 2, 80.dp.toPx())
+                val bubbleHeight = wordTextResult.size.height + paddingV * 2
+                val bubbleTop = center.y - radius - nodeRadius - 80.dp.toPx()
+                
+                // Draw Primary Capsule
+                drawRoundRect(
+                    color = Primary,
+                    topLeft = Offset(center.x - bubbleWidth / 2, bubbleTop),
+                    size = Size(bubbleWidth, bubbleHeight),
+                    cornerRadius = CornerRadius(bubbleHeight / 2, bubbleHeight / 2)
+                )
+                
+                // Draw Capsule Border
+                drawRoundRect(
+                    color = Color.White.copy(alpha = 0.5f),
+                    topLeft = Offset(center.x - bubbleWidth / 2, bubbleTop),
+                    size = Size(bubbleWidth, bubbleHeight),
+                    cornerRadius = CornerRadius(bubbleHeight / 2, bubbleHeight / 2),
+                    style = Stroke(width = 2.dp.toPx())
+                )
+
+                drawText(
+                    textLayoutResult = wordTextResult,
+                    topLeft = Offset(
+                        center.x - wordTextResult.size.width / 2,
+                        bubbleTop + (bubbleHeight - wordTextResult.size.height) / 2
                     )
                 )
             }

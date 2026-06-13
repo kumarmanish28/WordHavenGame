@@ -22,7 +22,6 @@ class PreferenceDataSourceImpl @Inject constructor(
     private object PreferencesKeys {
         val CURRENT_LEVEL = intPreferencesKey("current_level")
         val UNLOCKED_LEVELS = intPreferencesKey("unlocked_levels")
-        val COINS = intPreferencesKey("coins")
         val COMPLETED_LEVELS = stringSetPreferencesKey("completed_levels")
     }
 
@@ -38,7 +37,6 @@ class PreferenceDataSourceImpl @Inject constructor(
             UserProgress(
                 currentLevel = preferences[PreferencesKeys.CURRENT_LEVEL] ?: 1,
                 unlockedLevels = preferences[PreferencesKeys.UNLOCKED_LEVELS] ?: 1,
-                coins = preferences[PreferencesKeys.COINS] ?: 0,
                 completedLevels = preferences[PreferencesKeys.COMPLETED_LEVELS]?.map { it.toInt() }?.toSet() ?: emptySet()
             )
         }
@@ -55,13 +53,6 @@ class PreferenceDataSourceImpl @Inject constructor(
             if (levelId > current) {
                 preferences[PreferencesKeys.UNLOCKED_LEVELS] = levelId
             }
-        }
-    }
-
-    override suspend fun updateCoins(coins: Int) {
-        dataStore.edit { preferences ->
-            val current = preferences[PreferencesKeys.COINS] ?: 0
-            preferences[PreferencesKeys.COINS] = current + coins
         }
     }
 

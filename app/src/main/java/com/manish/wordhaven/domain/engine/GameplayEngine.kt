@@ -3,7 +3,9 @@ package com.manish.wordhaven.domain.engine
 import com.manish.wordhaven.domain.model.Level
 import com.manish.wordhaven.domain.validator.WordValidator
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class GameplayEngine @Inject constructor(
     private val validator: WordValidator
 ) {

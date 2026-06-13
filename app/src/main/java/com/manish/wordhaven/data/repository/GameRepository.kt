@@ -9,5 +9,5 @@ interface GameRepository {
     suspend fun getLevelById(id: Int): Level?
     fun getUserProgress(): Flow<UserProgress>
     suspend fun updateCurrentLevel(levelId: Int)
-    suspend fun completeLevel(levelId: Int, coinsEarned: Int)
+    suspend fun completeLevel(levelId: Int)
 }
