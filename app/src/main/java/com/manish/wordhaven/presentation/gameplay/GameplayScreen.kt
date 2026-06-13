@@ -143,7 +143,9 @@ fun GameplayScreen(
                             ) {
                                 CrosswordGrid(
                                     level = level,
-                                    foundWords = uiState.foundWords
+                                    foundWords = uiState.foundWords,
+                                    lastSubmittedWord = uiState.lastSubmittedWord,
+                                    lastWordResult = uiState.lastWordResult
                                 )
                             }
 
@@ -174,7 +176,9 @@ fun GameplayScreen(
                         ) {
                             CrosswordGrid(
                                 level = level,
-                                foundWords = uiState.foundWords
+                                foundWords = uiState.foundWords,
+                                lastSubmittedWord = uiState.lastSubmittedWord,
+                                lastWordResult = uiState.lastWordResult
                             )
                         }
 
@@ -194,7 +198,8 @@ fun GameplayScreen(
                     }
                 }
 
-                // Animation for submitted word
+                // Animation for submitted word - REMOVED AS PER USER REQUEST
+                /*
                 uiState.lastSubmittedWord?.let { word ->
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         AnimatedVisibility(
@@ -218,6 +223,7 @@ fun GameplayScreen(
                         }
                     }
                 }
+                */
 
                 if (showPauseDialog) {
                     PauseDialog(
