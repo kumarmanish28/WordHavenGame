@@ -62,7 +62,7 @@ fun WordHavenNavGraph(navController: NavHostController) {
         }
         composable(Screen.Home.route) {
             HomeScreen(
-                onPlayClick = { navController.navigate(Screen.Gameplay.createRoute(1)) },
+                onPlayClick = { levelId -> navController.navigate(Screen.Gameplay.createRoute(levelId)) },
                 onLevelSelectClick = { navController.navigate(Screen.LevelSelect.route) },
             )
         }
@@ -80,6 +80,11 @@ fun WordHavenNavGraph(navController: NavHostController) {
                         popUpTo(Screen.Gameplay.route) {
                             inclusive = true
                         }
+                    }
+                },
+                onGameComplete = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
                     }
                 }
             )

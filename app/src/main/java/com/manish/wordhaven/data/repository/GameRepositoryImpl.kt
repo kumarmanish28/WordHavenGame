@@ -27,5 +27,12 @@ class GameRepositoryImpl @Inject constructor(
     override suspend fun completeLevel(levelId: Int) {
         preferenceDataSource.addCompletedLevel(levelId)
         preferenceDataSource.updateUnlockedLevels(levelId + 1)
+        preferenceDataSource.updateCurrentLevel(levelId + 1)
+    }
+
+    override suspend fun getTotalLevels(): Int = levelDataSource.getLevels().size
+
+    override suspend fun resetProgress() {
+        preferenceDataSource.resetProgress()
     }
 }

@@ -8,4 +8,5 @@ interface PreferenceDataSource {
     suspend fun updateCurrentLevel(levelId: Int)
     suspend fun updateUnlockedLevels(levelId: Int)
     suspend fun addCompletedLevel(levelId: Int)
+    suspend fun resetProgress()
 }

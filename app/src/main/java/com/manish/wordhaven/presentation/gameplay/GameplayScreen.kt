@@ -41,14 +41,22 @@ fun GameplayScreen(
     onBack:() -> Unit,
     onPauseClick: () -> Unit,
     onLevelComplete: (Int) -> Unit,
+    onGameComplete: () -> Unit,
     viewModel: GameplayViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val shakeAnim = remember { Animatable(0f) }
     var showPauseDialog by remember { mutableStateOf(false) }
+    var showGameCompleteDialog by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val context = LocalContext.current
+
+    LaunchedEffect(uiState.isGameComplete) {
+        if (uiState.isGameComplete) {
+            showGameCompleteDialog = true
+        }
+    }
 
     LaunchedEffect(uiState.lastWordResult) {
         uiState.lastWordResult?.let { result ->
@@ -96,7 +104,7 @@ fun GameplayScreen(
     uiState.level?.let { level ->
         val onLevelCompleteCalled = remember { mutableStateOf(false) }
         LaunchedEffect(uiState.isLevelComplete) {
-            if (uiState.isLevelComplete && !onLevelCompleteCalled.value) {
+            if (uiState.isLevelComplete && !uiState.isGameComplete && !onLevelCompleteCalled.value) {
                 onLevelCompleteCalled.value = true
                 onLevelComplete(level.id)
             }
@@ -230,6 +238,23 @@ fun GameplayScreen(
                         onDismiss = { showPauseDialog = false },
                         onResume = { showPauseDialog = false },
                         onQuit = onPauseClick
+                    )
+                }
+
+                if (showGameCompleteDialog) {
+                    AlertDialog(
+                        onDismissRequest = { /* Prevent dismiss */ },
+                        title = { Text("Congratulations!") },
+                        text = { Text("You have completed all levels in Word Haven! Progress will be reset.") },
+                        confirmButton = {
+                            Button(onClick = {
+                                viewModel.resetGame()
+                                showGameCompleteDialog = false
+                                onGameComplete()
+                            }) {
+                                Text("Restart Game")
+                            }
+                        }
                     )
                 }
             }

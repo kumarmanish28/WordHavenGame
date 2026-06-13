@@ -62,4 +62,12 @@ class PreferenceDataSourceImpl @Inject constructor(
             preferences[PreferencesKeys.COMPLETED_LEVELS] = current + levelId.toString()
         }
     }
+
+    override suspend fun resetProgress() {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.CURRENT_LEVEL] = 1
+            preferences[PreferencesKeys.UNLOCKED_LEVELS] = 1
+            preferences[PreferencesKeys.COMPLETED_LEVELS] = emptySet()
+        }
+    }
 }

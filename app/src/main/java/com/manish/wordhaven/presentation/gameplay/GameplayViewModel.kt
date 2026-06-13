@@ -20,12 +20,21 @@ class GameplayViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val levelId: Int = checkNotNull(savedStateHandle["levelId"])
+    private var totalLevels: Int = 0
 
     private val _uiState = MutableStateFlow(GameplayUiState())
     val uiState: StateFlow<GameplayUiState> = _uiState.asStateFlow()
 
     init {
         loadLevel()
+        saveCurrentLevel()
+        fetchTotalLevels()
+    }
+
+    private fun fetchTotalLevels() {
+        viewModelScope.launch {
+            totalLevels = repository.getTotalLevels()
+        }
     }
 
     private fun loadLevel() {
@@ -33,7 +42,15 @@ class GameplayViewModel @Inject constructor(
             val level = repository.getLevelById(levelId)
             if (level != null) {
                 _uiState.update { it.copy(level = level, isLoading = false) }
+            } else {
+                _uiState.update { it.copy(isLoading = false) }
             }
+        }
+    }
+
+    private fun saveCurrentLevel() {
+        viewModelScope.launch {
+            repository.updateCurrentLevel(levelId)
         }
     }
 
@@ -46,15 +63,19 @@ class GameplayViewModel @Inject constructor(
         when (result) {
             is WordResult.Valid -> {
                 val newFoundWords = currentState.foundWords + word.uppercase()
+                val isLevelComplete = result.isLevelComplete
+                val isGameComplete = isLevelComplete && levelId >= totalLevels
+                
                 _uiState.update { 
                     it.copy(
                         foundWords = newFoundWords,
-                        isLevelComplete = result.isLevelComplete,
+                        isLevelComplete = isLevelComplete,
+                        isGameComplete = isGameComplete,
                         lastWordResult = WordSubmissionResult.SUCCESS,
                         lastSubmittedWord = word.uppercase()
                     )
                 }
-                if (result.isLevelComplete) {
+                if (isLevelComplete) {
                     completeLevel()
                 }
             }
@@ -82,6 +103,12 @@ class GameplayViewModel @Inject constructor(
             repository.completeLevel(levelId)
         }
     }
+
+    fun resetGame() {
+        viewModelScope.launch {
+            repository.resetProgress()
+        }
+    }
 }
 
 enum class WordSubmissionResult {
@@ -93,6 +120,7 @@ data class GameplayUiState(
     val foundWords: Set<String> = emptySet(),
     val isLoading: Boolean = true,
     val isLevelComplete: Boolean = false,
+    val isGameComplete: Boolean = false,
     val errorTrigger: Int = 0,
     val lastWordResult: WordSubmissionResult? = null,
     val lastSubmittedWord: String? = null
