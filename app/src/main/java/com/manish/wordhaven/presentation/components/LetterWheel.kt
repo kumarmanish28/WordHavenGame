@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,8 +34,8 @@ fun LetterWheel(
 
     BoxWithConstraints(modifier = modifier) {
         val center = Offset(constraints.maxWidth / 2f, constraints.maxHeight / 2f)
-        val radius = min(constraints.maxWidth, constraints.maxHeight) / 3f
-        val nodeRadius = 30.dp.value * 2f // Adjust based on density if needed
+        val radius = min(constraints.maxWidth, constraints.maxHeight) / 3.8f
+        val nodeRadius = 36.dp.value * 2f
 
         val nodes = remember(letters) {
             val angleStep = 2 * PI / letters.size
@@ -85,10 +86,10 @@ fun LetterWheel(
                     )
                 }
         ) {
-            // Draw large wheel background
+            // Draw large wheel background with padding
             drawCircle(
-                color = Color.White.copy(alpha = 0.15f),
-                radius = radius + nodeRadius * 1.2f,
+                color = Color.White.copy(alpha = 0.2f),
+                radius = radius + nodeRadius * 1.6f,
                 center = center
             )
 
@@ -99,7 +100,7 @@ fun LetterWheel(
                         color = Primary.copy(alpha = 0.8f),
                         start = nodes[selectedIndices[i]].center,
                         end = nodes[selectedIndices[i + 1]].center,
-                        strokeWidth = 12f,
+                        strokeWidth = 20f,
                         cap = StrokeCap.Round
                     )
                 }
@@ -108,7 +109,7 @@ fun LetterWheel(
                         color = Primary.copy(alpha = 0.5f),
                         start = nodes[selectedIndices.last()].center,
                         end = touchPoint,
-                        strokeWidth = 12f,
+                        strokeWidth = 20f,
                         cap = StrokeCap.Round
                     )
                 }

@@ -1,5 +1,7 @@
 package com.manish.wordhaven.navigation
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -28,7 +30,31 @@ sealed class Screen(val route: String) {
 fun WordHavenNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route
+        startDestination = Screen.Splash.route,
+        enterTransition = {
+            fadeIn(animationSpec = tween(400)) + slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(400)
+            )
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(400)) + slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(400)
+            )
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(400)) + slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(400)
+            )
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(400)) + slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(400)
+            )
+        }
     ) {
         composable(Screen.Splash.route) {
             SplashScreen(onNext = {
@@ -41,7 +67,6 @@ fun WordHavenNavGraph(navController: NavHostController) {
             HomeScreen(
                 onPlayClick = { navController.navigate(Screen.Gameplay.createRoute(1)) },
                 onLevelSelectClick = { navController.navigate(Screen.LevelSelect.route) },
-                onSettingsClick = { /* show settings */ }
             )
         }
         composable(
@@ -49,6 +74,7 @@ fun WordHavenNavGraph(navController: NavHostController) {
             arguments = listOf(navArgument("levelId") { type = NavType.IntType })
         ) {
             GameplayScreen(
+                onBack = { navController.popBackStack() },
                 onPauseClick = { navController.popBackStack() },
                 onLevelComplete = { levelId, coins ->
                     navController.navigate(Screen.LevelComplete.createRoute(levelId, coins)) {

@@ -15,15 +15,23 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import android.content.res.Configuration
+import androidx.compose.foundation.Image
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.ui.res.painterResource
+import com.manish.wordhaven.R
 import com.manish.wordhaven.presentation.components.CrosswordGrid
 import com.manish.wordhaven.presentation.components.LetterWheel
 import com.manish.wordhaven.presentation.components.PauseDialog
+import com.manish.wordhaven.presentation.components.GameToolbar
 import com.manish.wordhaven.presentation.theme.Primary
 import com.manish.wordhaven.presentation.theme.Secondary
-import kotlin.math.log
 
 @Composable
 fun GameplayScreen(
+    onBack:() -> Unit,
     onPauseClick: () -> Unit,
     onLevelComplete: (Int, Int) -> Unit,
     viewModel: GameplayViewModel = hiltViewModel()
@@ -31,6 +39,8 @@ fun GameplayScreen(
     val uiState by viewModel.uiState.collectAsState()
     val shakeAnim = remember { Animatable(0f) }
     var showPauseDialog by remember { mutableStateOf(false) }
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     LaunchedEffect(uiState.errorTrigger) {
         if (uiState.errorTrigger > 0) {
@@ -47,87 +57,115 @@ fun GameplayScreen(
     }
 
     if (uiState.isLoading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding(),
+            contentAlignment = Alignment.Center
+        ) {
             CircularProgressIndicator()
         }
     } else {
-        uiState.level?.let { level ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFFE0F7FA), Color(0xFFB2EBF2))
-                        )
-                    )
-            ) {
-                Column(
+    uiState.level?.let { level ->
+        val onLevelCompleteCalled = remember { mutableStateOf(false) }
+        LaunchedEffect(uiState.isLevelComplete) {
+            if (uiState.isLevelComplete && !onLevelCompleteCalled.value) {
+                onLevelCompleteCalled.value = true
+                onLevelComplete(level.id, 50)
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_game_bg),
+                    contentDescription = "game bg",
                     modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    alpha = 0.8f
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .navigationBarsPadding(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Top Bar
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = { showPauseDialog = true }) {
-                            Icon(Icons.Default.Pause, contentDescription = "Pause", tint = Primary)
-                        }
-                        Text(
-                            text = "Level ${level.id}",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Primary
-                        )
-                        Surface(
-                            shape = MaterialTheme.shapes.medium,
-                            color = Color.White.copy(alpha = 0.5f)
+                    GameToolbar(
+                        title = "Level ${level.id}",
+                        onNavigationClick = onBack,
+                        navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
+                        onActionIconClick = { showPauseDialog = true },
+                        actionIcon = Icons.Filled.Pause,
+                        isAction = true
+                    )
+
+                    if (isLandscape) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                            // Grid on left
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .graphicsLayer(translationX = shakeAnim.value),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Text(text = "💰", modifier = Modifier.padding(end = 4.dp))
-                                Text(text = "500", fontWeight = FontWeight.Bold)
+                                CrosswordGrid(
+                                    level = level,
+                                    foundWords = uiState.foundWords
+                                )
+                            }
+
+                            // Letter Wheel on right
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                LetterWheel(
+                                    letters = level.letters,
+                                    onWordSelected = { word ->
+                                        viewModel.onWordSubmitted(word)
+                                    }
+                                )
                             }
                         }
-                    }
+                    } else {
+                        // Portrait Layout
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                                .graphicsLayer(translationX = shakeAnim.value),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CrosswordGrid(
+                                level = level,
+                                foundWords = uiState.foundWords
+                            )
+                        }
 
-                    // Grid
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .graphicsLayer(translationX = shakeAnim.value),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CrosswordGrid(
-                            level = level,
-                            foundWords = uiState.foundWords
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(350.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            LetterWheel(
+                                letters = level.letters,
+                                onWordSelected = { word ->
+                                    viewModel.onWordSubmitted(word)
+                                },
+                            )
+                        }
                     }
-
-                    // Letter Wheel Section
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp)
-                            .padding(bottom = 32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        LetterWheel(
-                            letters = level.letters,
-                            onWordSelected = { word ->
-                                viewModel.onWordSubmitted(word)
-                            }
-                        )
-                    }
-                }
-
-                if (uiState.isLevelComplete) {
-                    onLevelComplete(level.id, 50)
                 }
 
                 if (showPauseDialog) {

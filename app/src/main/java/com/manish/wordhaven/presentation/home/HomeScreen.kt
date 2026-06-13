@@ -20,7 +20,6 @@ import com.manish.wordhaven.presentation.theme.Primary
 fun HomeScreen(
     onPlayClick: () -> Unit,
     onLevelSelectClick: () -> Unit,
-    onSettingsClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -44,7 +43,7 @@ fun HomeScreen(
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.White
             )
-            
+
             Spacer(modifier = Modifier.height(64.dp))
 
             Button(
@@ -73,15 +72,6 @@ fun HomeScreen(
             ) {
                 Text(text = "LEVELS", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
-        }
-
-        IconButton(
-            onClick = onSettingsClick,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-        ) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
         }
     }
 }

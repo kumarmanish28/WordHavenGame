@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.manish.wordhaven.presentation.theme.Primary
 
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.manish.wordhaven.presentation.components.GameToolbar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,22 +30,16 @@ fun LevelSelectScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Levels") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { padding ->
+    Column(modifier = Modifier.fillMaxSize()) {
+        GameToolbar(
+            title = "Select Level",
+            onNavigationClick = onBack,
+            navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
+        )
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .background(
                     Brush.verticalGradient(
                         listOf(Color(0xFFE8F5E9), Color(0xFFC8E6C9))
