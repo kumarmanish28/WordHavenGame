@@ -88,7 +88,7 @@ fun LetterWheel(
         ) {
             // Draw large wheel background with padding
             drawCircle(
-                color = Color.White.copy(alpha = 0.2f),
+                color = Color.White.copy(alpha = 0.5f),
                 radius = radius + nodeRadius * 1.6f,
                 center = center
             )

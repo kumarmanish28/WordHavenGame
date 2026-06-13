@@ -1,39 +1,52 @@
 package com.manish.wordhaven.presentation.gameplay
 
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import android.content.res.Configuration
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.repeatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import android.content.res.Configuration
-import androidx.compose.foundation.Image
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.manish.wordhaven.R
 import com.manish.wordhaven.presentation.components.CrosswordGrid
+import com.manish.wordhaven.presentation.components.GameToolbar
 import com.manish.wordhaven.presentation.components.LetterWheel
 import com.manish.wordhaven.presentation.components.PauseDialog
-import com.manish.wordhaven.presentation.components.GameToolbar
-import com.manish.wordhaven.presentation.theme.Primary
-import com.manish.wordhaven.presentation.theme.Secondary
 
 @Composable
 fun GameplayScreen(
     onBack:() -> Unit,
     onPauseClick: () -> Unit,
-    onLevelComplete: (Int, Int) -> Unit,
+    onLevelComplete: (Int) -> Unit,
     viewModel: GameplayViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -71,7 +84,7 @@ fun GameplayScreen(
         LaunchedEffect(uiState.isLevelComplete) {
             if (uiState.isLevelComplete && !onLevelCompleteCalled.value) {
                 onLevelCompleteCalled.value = true
-                onLevelComplete(level.id, 50)
+                onLevelComplete(level.id)
             }
         }
 
@@ -82,9 +95,8 @@ fun GameplayScreen(
                 Image(
                     painter = painterResource(R.drawable.ic_game_bg),
                     contentDescription = "game bg",
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().blur(15.dp),
                     contentScale = ContentScale.Crop,
-                    alpha = 0.8f
                 )
                 Column(
                     modifier = Modifier

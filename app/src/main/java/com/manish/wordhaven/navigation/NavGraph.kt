@@ -21,9 +21,6 @@ sealed class Screen(val route: String) {
         fun createRoute(levelId: Int) = "gameplay/$levelId"
     }
     object LevelSelect : Screen("level_select")
-    object LevelComplete : Screen("complete/{levelId}/{coins}") {
-        fun createRoute(levelId: Int, coins: Int) = "complete/$levelId/$coins"
-    }
 }
 
 @Composable
@@ -76,9 +73,13 @@ fun WordHavenNavGraph(navController: NavHostController) {
             GameplayScreen(
                 onBack = { navController.popBackStack() },
                 onPauseClick = { navController.popBackStack() },
-                onLevelComplete = { levelId, coins ->
-                    navController.navigate(Screen.LevelComplete.createRoute(levelId, coins)) {
-                        popUpTo(Screen.Gameplay.route) { inclusive = true }
+                onLevelComplete = { levelId ->
+                    navController.navigate(
+                        Screen.Gameplay.createRoute(levelId + 1)
+                    ) {
+                        popUpTo(Screen.Gameplay.route) {
+                            inclusive = true
+                        }
                     }
                 }
             )
@@ -89,30 +90,6 @@ fun WordHavenNavGraph(navController: NavHostController) {
                     navController.navigate(Screen.Gameplay.createRoute(levelId))
                 },
                 onBack = { navController.popBackStack() }
-            )
-        }
-        composable(
-            route = Screen.LevelComplete.route,
-            arguments = listOf(
-                navArgument("levelId") { type = NavType.IntType },
-                navArgument("coins") { type = NavType.IntType }
-            )
-        ) { backStackEntry ->
-            val levelId = backStackEntry.arguments?.getInt("levelId") ?: 1
-            val coins = backStackEntry.arguments?.getInt("coins") ?: 0
-            LevelCompleteScreen(
-                levelId = levelId,
-                coinsEarned = coins,
-                onNextLevel = {
-                    navController.navigate(Screen.Gameplay.createRoute(levelId + 1)) {
-                        popUpTo(Screen.LevelComplete.route) { inclusive = true }
-                    }
-                },
-                onHome = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Home.route) { inclusive = true }
-                    }
-                }
             )
         }
     }

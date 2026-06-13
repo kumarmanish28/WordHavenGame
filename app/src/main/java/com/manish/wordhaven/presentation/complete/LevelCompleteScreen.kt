@@ -15,7 +15,6 @@ import com.manish.wordhaven.presentation.theme.Primary
 @Composable
 fun LevelCompleteScreen(
     levelId: Int,
-    coinsEarned: Int,
     onNextLevel: () -> Unit,
     onHome: () -> Unit
 ) {
@@ -50,22 +49,6 @@ fun LevelCompleteScreen(
                     fontSize = 18.sp,
                     color = Color.Gray
                 )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "💰", fontSize = 24.sp)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "+$coinsEarned",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Primary
-                    )
-                }
-
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Button(
