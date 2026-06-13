@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.manish.wordhaven.domain.model.GridWord
@@ -42,7 +43,7 @@ fun CrosswordGrid(
         }
     }
 
-    BoxWithConstraints(modifier = modifier.padding(16.dp)) {
+    BoxWithConstraints(modifier = modifier.padding(4.dp)) {
         val density = LocalDensity.current
         val availableWidthPx = constraints.maxWidth
         val availableHeightPx = constraints.maxHeight
@@ -50,13 +51,14 @@ fun CrosswordGrid(
         val maxCellWidthPx = availableWidthPx / colCount
         val maxCellHeightPx = availableHeightPx / rowCount
         
-        val defaultCellSizePx = with(density) { 45.dp.toPx() }
-        val cellSizePx = minOf(maxCellWidthPx.toFloat(), maxCellHeightPx.toFloat(), defaultCellSizePx) * 1.2f
+        val defaultCellSizePx = with(density) { 72.dp.toPx() }
+        val cellSizePx = minOf(maxCellWidthPx.toFloat(), maxCellHeightPx.toFloat(), defaultCellSizePx)
         val cellSizeDp = with(density) { cellSizePx.toDp() }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
         ) {
             for (r in 0 until rowCount) {
                 Row {
@@ -69,22 +71,29 @@ fun CrosswordGrid(
                         Box(
                             modifier = Modifier
                                 .size(cellSizeDp)
-                                .padding(2.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(if (char != null) Color.White.copy(alpha = 0.9f) else Color.Transparent)
+                                .padding(4.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(
+                                    when {
+                                        char != null && isPartOfFoundWord -> Color.White
+                                        char != null -> Color.White.copy(alpha = 0.25f)
+                                        else -> Color.Transparent
+                                    }
+                                )
                                 .border(
-                                    width = if (char != null) 1.dp else 0.dp,
-                                    color = if (char != null) Color.LightGray else Color.Transparent,
-                                    shape = RoundedCornerShape(4.dp)
+                                    width = if (char != null) 2.dp else 0.dp,
+                                    color = if (char != null && isPartOfFoundWord) Color.White else if (char != null) Color.White.copy(alpha = 0.5f) else Color.Transparent,
+                                    shape = RoundedCornerShape(16.dp)
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
                             if (char != null && isPartOfFoundWord) {
                                 Text(
                                     text = char.toString(),
-                                    fontSize = (cellSizeDp.value * 0.6f).sp,
+                                    fontSize = (cellSizeDp.value * 0.45f).sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Primary
+                                    color = Primary,
+                                    textAlign = TextAlign.Center
                                 )
                             }
                         }
