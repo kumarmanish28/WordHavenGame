@@ -31,11 +31,8 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color(0xFF81C784), Color(0xFF2E7D32))
-                )
-            )
+            .fillMaxSize()
+            .background(Primary),
     ) {
         Column(
             modifier = Modifier

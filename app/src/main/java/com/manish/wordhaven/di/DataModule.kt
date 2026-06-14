@@ -6,6 +6,8 @@ import com.manish.wordhaven.data.datasource.PreferenceDataSource
 import com.manish.wordhaven.data.datasource.PreferenceDataSourceImpl
 import com.manish.wordhaven.data.repository.GameRepository
 import com.manish.wordhaven.data.repository.GameRepositoryImpl
+import com.manish.wordhaven.data.service.SoundServiceImpl
+import com.manish.wordhaven.domain.service.SoundService
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,4 +35,10 @@ abstract class DataModule {
     abstract fun bindGameRepository(
         gameRepositoryImpl: GameRepositoryImpl
     ): GameRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSoundService(
+        soundServiceImpl: SoundServiceImpl
+    ): SoundService
 }

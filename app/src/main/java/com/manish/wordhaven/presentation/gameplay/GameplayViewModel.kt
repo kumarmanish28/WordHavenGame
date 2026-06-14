@@ -7,6 +7,7 @@ import com.manish.wordhaven.data.repository.GameRepository
 import com.manish.wordhaven.domain.engine.GameplayEngine
 import com.manish.wordhaven.domain.engine.WordResult
 import com.manish.wordhaven.domain.model.Level
+import com.manish.wordhaven.domain.service.SoundService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class GameplayViewModel @Inject constructor(
     private val repository: GameRepository,
     private val engine: GameplayEngine,
+    private val soundService: SoundService,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -29,6 +31,11 @@ class GameplayViewModel @Inject constructor(
         loadLevel()
         saveCurrentLevel()
         fetchTotalLevels()
+        
+        val fromMenu: Boolean = savedStateHandle["fromMenu"] ?: false
+        if (fromMenu) {
+            soundService.playStartSound()
+        }
     }
 
     private fun fetchTotalLevels() {
@@ -62,6 +69,7 @@ class GameplayViewModel @Inject constructor(
         
         when (result) {
             is WordResult.Valid -> {
+                soundService.playSuccessSound()
                 val newFoundWords = currentState.foundWords + word.uppercase()
                 val isLevelComplete = result.isLevelComplete
                 val isGameComplete = isLevelComplete && levelId >= totalLevels
@@ -83,6 +91,7 @@ class GameplayViewModel @Inject constructor(
                 // Bonus word found
             }
             WordResult.Invalid, WordResult.Duplicate -> {
+                soundService.playFailureSound()
                 _uiState.update { 
                     it.copy(
                         lastWordResult = WordSubmissionResult.FAILURE,
@@ -92,6 +101,11 @@ class GameplayViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        soundService.release()
     }
 
     fun clearSubmissionResult() {

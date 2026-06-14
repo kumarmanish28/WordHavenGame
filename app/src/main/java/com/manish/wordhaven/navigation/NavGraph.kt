@@ -1,14 +1,15 @@
 package com.manish.wordhaven.navigation
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.manish.wordhaven.presentation.complete.LevelCompleteScreen
 import com.manish.wordhaven.presentation.gameplay.GameplayScreen
 import com.manish.wordhaven.presentation.home.HomeScreen
 import com.manish.wordhaven.presentation.home.SplashScreen
@@ -17,8 +18,8 @@ import com.manish.wordhaven.presentation.levelselect.LevelSelectScreen
 sealed class Screen(val route: String) {
     object Splash : Screen("splash")
     object Home : Screen("home")
-    object Gameplay : Screen("gameplay/{levelId}") {
-        fun createRoute(levelId: Int) = "gameplay/$levelId"
+    object Gameplay : Screen("gameplay/{levelId}?fromMenu={fromMenu}") {
+        fun createRoute(levelId: Int, fromMenu: Boolean = false) = "gameplay/$levelId?fromMenu=$fromMenu"
     }
     object LevelSelect : Screen("level_select")
 }
@@ -62,20 +63,23 @@ fun WordHavenNavGraph(navController: NavHostController) {
         }
         composable(Screen.Home.route) {
             HomeScreen(
-                onPlayClick = { levelId -> navController.navigate(Screen.Gameplay.createRoute(levelId)) },
+                onPlayClick = { levelId -> navController.navigate(Screen.Gameplay.createRoute(levelId, true)) },
                 onLevelSelectClick = { navController.navigate(Screen.LevelSelect.route) },
             )
         }
         composable(
             route = Screen.Gameplay.route,
-            arguments = listOf(navArgument("levelId") { type = NavType.IntType })
+            arguments = listOf(
+                navArgument("levelId") { type = NavType.IntType },
+                navArgument("fromMenu") { type = NavType.BoolType; defaultValue = false }
+            )
         ) {
             GameplayScreen(
                 onBack = { navController.popBackStack() },
                 onPauseClick = { navController.popBackStack() },
                 onLevelComplete = { levelId ->
                     navController.navigate(
-                        Screen.Gameplay.createRoute(levelId + 1)
+                        Screen.Gameplay.createRoute(levelId + 1, false)
                     ) {
                         popUpTo(Screen.Gameplay.route) {
                             inclusive = true
@@ -92,7 +96,7 @@ fun WordHavenNavGraph(navController: NavHostController) {
         composable(Screen.LevelSelect.route) {
             LevelSelectScreen(
                 onLevelSelected = { levelId ->
-                    navController.navigate(Screen.Gameplay.createRoute(levelId))
+                    navController.navigate(Screen.Gameplay.createRoute(levelId, true))
                 },
                 onBack = { navController.popBackStack() }
             )
