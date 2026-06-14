@@ -4,8 +4,8 @@
     "letters": ["L", "I", "V", "E"],
     "gridWords": [
       {"word": "LIVE", "row": 0, "col": 0, "isVertical": false},
-      {"word": "VILE", "row": 0, "col": 0, "isVertical": true},
-      {"word": "EVIL", "row": 2, "col": 0, "isVertical": false}
+      {"word": "VILE", "row": 0, "col": 2, "isVertical": true},
+      {"word": "EVIL", "row": 3, "col": 2, "isVertical": false}
     ],
     "bonusWords": ["VEIL"]
   },
@@ -31,7 +31,7 @@
     "letters": ["B", "A", "T"],
     "gridWords": [
       {"word": "BAT", "row": 0, "col": 0, "isVertical": false},
-      {"word": "TAB", "row": 0, "col": 0, "isVertical": true}
+      {"word": "TAB", "row": 0, "col": 2, "isVertical": true}
     ],
     "bonusWords": []
   },
@@ -40,7 +40,7 @@
     "letters": ["D", "O", "G"],
     "gridWords": [
       {"word": "DOG", "row": 0, "col": 0, "isVertical": false},
-      {"word": "GOD", "row": 0, "col": 0, "isVertical": true}
+      {"word": "GOD", "row": 0, "col": 2, "isVertical": true}
     ],
     "bonusWords": []
   },
@@ -58,7 +58,7 @@
     "letters": ["E", "A", "T"],
     "gridWords": [
       {"word": "EAT", "row": 0, "col": 0, "isVertical": false},
-      {"word": "ATE", "row": 0, "col": 0, "isVertical": true},
+      {"word": "ATE", "row": 0, "col": 1, "isVertical": true},
       {"word": "TEA", "row": 2, "col": 0, "isVertical": false}
     ],
     "bonusWords": []
@@ -77,7 +77,7 @@
     "letters": ["N", "E", "T"],
     "gridWords": [
       {"word": "NET", "row": 0, "col": 0, "isVertical": false},
-      {"word": "TEN", "row": 0, "col": 0, "isVertical": true}
+      {"word": "TEN", "row": 0, "col": 2, "isVertical": true}
     ],
     "bonusWords": []
   },
@@ -86,7 +86,7 @@
     "letters": ["R", "O", "S", "E"],
     "gridWords": [
       {"word": "ROSE", "row": 0, "col": 0, "isVertical": false},
-      {"word": "SORE", "row": 0, "col": 0, "isVertical": true},
+      {"word": "SORE", "row": 0, "col": 2, "isVertical": true},
       {"word": "ORES", "row": 3, "col": 0, "isVertical": false}
     ],
     "bonusWords": []
@@ -105,9 +105,9 @@
     "letters": ["S", "T", "A", "R"],
     "gridWords": [
       {"word": "STAR", "row": 0, "col": 0, "isVertical": false},
-      {"word": "RATS", "row": 0, "col": 0, "isVertical": true},
-      {"word": "ARTS", "row": 3, "col": 0, "isVertical": false},
-      {"word": "TARS", "row": 0, "col": 3, "isVertical": true}
+      {"word": "TARS", "row": 0, "col": 1, "isVertical": true},
+      {"word": "ARTS", "row": 1, "col": 1, "isVertical": false},
+      {"word": "RATS", "row": 1, "col": 2, "isVertical": true}
     ],
     "bonusWords": []
   },
@@ -116,7 +116,7 @@
     "letters": ["W", "O", "L", "F"],
     "gridWords": [
       {"word": "WOLF", "row": 0, "col": 0, "isVertical": false},
-      {"word": "FLOW", "row": 0, "col": 0, "isVertical": true}
+      {"word": "FLOW", "row": 0, "col": 3, "isVertical": true}
     ],
     "bonusWords": []
   },
@@ -125,9 +125,9 @@
     "letters": ["T", "E", "A", "M"],
     "gridWords": [
       {"word": "TEAM", "row": 0, "col": 0, "isVertical": false},
-      {"word": "MEAT", "row": 0, "col": 0, "isVertical": true},
-      {"word": "MATE", "row": 3, "col": 0, "isVertical": false},
-      {"word": "TAME", "row": 0, "col": 3, "isVertical": true}
+      {"word": "MEAT", "row": 0, "col": 3, "isVertical": true},
+      {"word": "MATE", "row": 3, "col": 1, "isVertical": false},
+      {"word": "TAME", "row": 0, "col": 0, "isVertical": true}
     ],
     "bonusWords": []
   },
@@ -136,7 +136,7 @@
     "letters": ["L", "A", "M", "B"],
     "gridWords": [
       {"word": "LAMB", "row": 0, "col": 0, "isVertical": false},
-      {"word": "BALM", "row": 0, "col": 1, "isVertical": true}
+      {"word": "BALM", "row": 0, "col": 3, "isVertical": true}
     ],
     "bonusWords": []
   },
