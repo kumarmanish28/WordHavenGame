@@ -1,4 +1,4 @@
-# Word Haven - Production Word Puzzle Game
+# Word Haven - Word Puzzle Game
 
 Word Haven is a high-quality Android word puzzle game inspired by Wordscapes. It features a custom-built circular letter wheel, a crossword-style grid with glassmorphism effects, and a robust persistence system.
 
