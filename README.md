@@ -2,6 +2,12 @@
 
 Word Haven is a high-quality Android word puzzle game inspired by Wordscapes. It features a custom-built circular letter wheel, a crossword-style grid with glassmorphism effects, and a robust persistence system.
 
+## APK Download
+
+Download APK:
+https://github.com/kumarmanish28/WordHavenGame/releases/download/v1.0.0/WordHavenGame.apk
+
+
 ## Architectural Choices
 
 The project is built using **Clean Architecture** principles and the **MVVM (Model-View-ViewModel)** pattern to ensure scalability, testability, and a clear separation of concerns:
@@ -30,25 +36,16 @@ The game's content is structured as a declarative JSON dataset found in `assets/
 
 ### Schema Example:
 ```json
-{
-  "id": 1,
-  "letters": ["L", "I", "V", "E"],
-  "gridWords": [
-    {
-      "word": "LIVE", 
-      "row": 0, 
-      "col": 0, 
-      "isVertical": false
-    },
-    {
-      "word": "VILE", 
-      "row": 0, 
-      "col": 0, 
-      "isVertical": true
-    }
-  ],
-  "bonusWords": ["VEIL"]
-}
+ {
+    "id": 1,
+    "letters": ["L", "I", "V", "E"],
+    "gridWords": [
+      {"word": "LIVE", "row": 0, "col": 0, "isVertical": false},
+      {"word": "VILE", "row": 0, "col": 2, "isVertical": true},
+      {"word": "EVIL", "row": 3, "col": 2, "isVertical": false}
+    ],
+    "bonusWords": ["VEIL"]
+  }
 ```
 - **Letters**: The set of characters available on the swiping wheel.
 - **GridWords**: Defines the specific placement, orientation (Vertical/Horizontal), and starting coordinates for words within the crossword grid.
